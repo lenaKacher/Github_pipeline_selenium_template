@@ -2,7 +2,7 @@ name: Maven_Build_Example
 env:
   JAVA_VERSION : "17"
   DISTRIBUTION : "zulu"
-  suiteXmlFile: "testSuites/tests.xml"
+  suiteXmlFile: "testsuites/advantageshop/All-Tests.xml"
   BROWSER: "CHROME-REMOTE"
   LOGIN: "${{ secrets.LOGIN }}"
   PASSWORD: "${{ secrets.PASSWORD }}"
@@ -27,15 +27,17 @@ jobs:
         distribution: ${{ env.DISTRIBUTION }}
         java-version: ${{ env.JAVA_VERSION }}
 
-    - name: Step 4 - secret variable
+    - name: Step 3 - secret variable
       run: |
         echo "login is $LOGIN"
         echo "password is $PASSWORD" 
 
-    - name: Step 5 - Build with Maven
+    - name: Step 4 - Build with Maven
       run:
         mvn clean test -DsuiteXmlFile="$suiteXmlFile" -Dbrowser="$BROWSER" -Durl="$URL" -Dlogin="$LOGIN" -Dpassword="$PASSWORD"
 
-    - name: Step 6 - Tear down Docker Compose services
-      run:
-        docker compose down
+    - name: Step 5 - Save Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: github-actions-artifact
+        path: target/surefire-reports/TestReport.html
